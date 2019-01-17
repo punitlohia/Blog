@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile page</title>
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <a href={% url 'index' %}><button>Home</button></a><br>
+  <h3>Profile</h3>
+  Username:- {{data.username}}<br>
+  First name:- {{data.first_name}}<br>
+  Last name:- {{data.last_name}}<br>
+  Email:- {{data.email}}<br>
+  Birth Date:- {{data.profile.birth_date}}<br>
+  Followers:<br>
+  {% for a in followers_list.all %}
+    <a href={% url 'user_profile' a.id %}>{{a.get_full_name}}</a><br>
+  {% endfor %}
+  Following:<br>
+  {% for a in following_list.all %}
+    <a href={% url 'user_profile' a.id %}>{{a.get_full_name}}</a><br>
+  {% endfor %}
+  {% if request.user in followers_list.all %}
+  <a href={% url 'unfollow_user' data.id %}><button>Unfollow</button></a>
+  <h3>Posts:-</h3><br>
+  {% for po in posts %}
+    <b>{{po.title}}</b><br>
+    {{po.description}}<br>
+    &nbsp;&nbsp;&nbsp;Posted by {{po.user.get_full_name}} on {{po.createddatetime}}<br>
+    <form action= "{% url 'add_comment_userprofile' po.id data.id %}" , method="POST">
+        {% csrf_token %}
+        {{ comment.as_p }}
+
+        <input type="submit" name="submit" value="Comment">
+
+    </form>
+    {% for comment in po.comment_set.all %}
+          {{ comment.user.get_full_name }}:- {{ comment.comment}} on {{ comment.commentdatetime }} <br>
+    {% empty %}
+      <p>No comments here yet </p>
+    {% endfor %}
+    <br><br>
+  {% endfor %}
+  {% else %}
+  <a href={% url 'follow_user' data.id %}><button>Follow</button></a>
+  {% endif %}
+  {% else %}
+  <h2>You are not logged in</h2>
+  <a href="accounts/login"><button>Login</button></a>
+  <a href="profile/register"><button>Register</button></a>
+  {% endif %}
+
+
+</body>
+</html>

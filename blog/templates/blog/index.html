@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blog</title>
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <h2>Your username is {{user.username}}</h2>
+  <a href="profile"><button>Profile</button></a>
+  <a href="allusers"><button>Users</button></a>
+  <a href="accounts/logout"><button>Logout</button></a>
+  <br><br>
+  <h4>Create Post</h4>
+  <form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Post</button>
+  </form>
+  <br><br>
+  <h4>News Feed</h4><br>
+  {% for po in posts %}
+    <b>{{po.title}}</b><br>
+    {{po.description}}<br>
+    &nbsp;&nbsp;&nbsp;Posted by {{po.user.get_full_name}} on {{po.createddatetime}}<br>
+    <form action= "{% url 'add_comment' po.id %}" , method="POST">
+        {% csrf_token %}
+        {{ comment.as_p }}
+
+        <input type="submit" name="submit" value="Comment">
+
+    </form>
+    {% for comment in po.comment_set.all %}
+          {{ comment.user.get_full_name }}:- {{ comment.comment}} on {{ comment.commentdatetime }} <br>
+    {% empty %}
+      <p>No comments here yet </p>
+    {% endfor %}
+    <br><br>
+  {% endfor %}
+  {% else %}
+  <h2>You are not logged in</h2>
+  <a href="accounts/login"><button>Login</button></a>
+  <a href="profile/register"><button>Register</button></a>
+  {% endif %}
+</body>
+</html>
