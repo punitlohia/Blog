@@ -46,8 +46,8 @@
   {% endif %}
   {% else %}
   <h2>You are not logged in</h2>
-  <a href="accounts/login"><button>Login</button></a>
-  <a href="profile/register"><button>Register</button></a>
+  <a href={% url 'login' %}><button>Login</button></a>
+  <a href={% url 'register' %}><button>Register</button></a>
   {% endif %}
 
 
