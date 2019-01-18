@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.forms import UserCreationForm,UserChangeForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,update_session_auth_hash
-from blog.forms import SignUpForm,EditProfileForm,PostForm,AddComment
+from blog.forms import SignUpForm,EditProfileForm,PostForm,AddComment,PostFormOrignal
 from django.contrib.auth.models import User
 from .models import Post
 
@@ -11,12 +11,18 @@ def index(request):
     following_list = request.user.profile.following.all()
     if request.method=="POST":
         form = PostForm(request.POST)
+        form2 = PostFormOrignal()
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
             post.save()
             title=form.cleaned_data['title']
             description=form.cleaned_data['description']
+            post2=form2.save(commit=False)
+            post2.user=post.user
+            post2.title=title
+            post2.description=description
+            post2.save()
             form = PostForm()
     else:
         form = PostForm()
@@ -95,11 +101,18 @@ def edit_post(request,id):
     post = Post.objects.get(id=id)
     if request.method == "POST":
         form = PostForm(request.POST,instance=post)
+        form2 = PostFormOrignal()
         if form.is_valid():
             post = form.save()
             post.user=request.user
             post.save()
+            post2=form2.save(commit=False)
+            post2.user=post.user
+            post2.title=post.title
+            post2.description=post.description
+            post2.save()
             return redirect('index')
+
     else:
         form=PostForm(instance=post)
     return render(request,'registration/edit_post.html',{"form":form})
@@ -116,6 +129,14 @@ def edit_post_profile(request,id):
     else:
         form=PostForm(instance=post)
     return render(request,'registration/edit_post.html',{"form":form})
+
+def delete_post(request,id):
+    Post.objects.get(id=id).delete()
+    return redirect('index')
+
+def delete_post_profile(request,id):
+    Post.objects.get(id=id).delete()
+    return redirect('profile')
 
 def add_comment(request, id):
     if request.method == "POST":

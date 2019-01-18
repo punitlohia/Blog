@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .models import Profile,Post,Comment
+from .models import Profile,Post,Comment,PostOrignal
 
 class ProfileInline(admin.StackedInline):
     model = Profile
@@ -20,10 +20,14 @@ class CustomUserAdmin(UserAdmin):
 class PostsAdmin(admin.ModelAdmin):
     list_display=('title','description','user','createddatetime')
 
+class PostsOrigrnalAdmin(admin.ModelAdmin):
+    list_display=('title','description','user','createddatetime')
+
 class CommentAdmin(admin.ModelAdmin):
     list_display=('comment','post','user','commentdatetime')
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Post,PostsAdmin)
+admin.site.register(PostOrignal,PostsOrigrnalAdmin)
 admin.site.register(Comment,CommentAdmin)
