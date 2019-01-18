@@ -5,7 +5,8 @@
 </head>
 <body>
   {% if user.is_authenticated %}
-  <a href={% url 'index' %}><button>Home</button></a><br>
+  <a href={% url 'index' %}><button>Home</button></a>
+  <a href={% url 'logout' %}><button>Logout</button></a><br>
   <h3>Profile</h3>
   Username:- {{data.username}}<br>
   First name:- {{data.first_name}}<br>
@@ -14,7 +15,11 @@
   Birth Date:- {{data.profile.birth_date}}<br>
   Followers:<br>
   {% for a in followers_list.all %}
+  {% if a == user %}
+  <a href={% url 'profile' %}>{{a.get_full_name}}</a><br>
+  {% else %}
     <a href={% url 'user_profile' a.id %}>{{a.get_full_name}}</a><br>
+  {% endif %}
   {% endfor %}
   Following:<br>
   {% for a in following_list.all %}

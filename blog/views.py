@@ -70,6 +70,8 @@ def EditProfile(request):
         form = EditProfileForm(request.POST,instance=request.user)
         if form.is_valid():
             user = form.save()
+            user.profile.birth_date = form.cleaned_data.get('birth_date')
+            user.save()
             return redirect('profile')
     else:
         form = EditProfileForm(instance=request.user)
@@ -88,6 +90,32 @@ def ChangePassword(request):
         form = PasswordChangeForm(user=request.user)
     context = {'form':form}
     return render(request,'registration/editpassword.html',context)
+
+def edit_post(request,id):
+    post = Post.objects.get(id=id)
+    if request.method == "POST":
+        form = PostForm(request.POST,instance=post)
+        if form.is_valid():
+            post = form.save()
+            post.user=request.user
+            post.save()
+            return redirect('index')
+    else:
+        form=PostForm(instance=post)
+    return render(request,'registration/edit_post.html',{"form":form})
+
+def edit_post_profile(request,id):
+    post = Post.objects.get(id=id)
+    if request.method == "POST":
+        form = PostForm(request.POST,instance=post)
+        if form.is_valid():
+            post = form.save()
+            post.user=request.user
+            post.save()
+            return redirect('profile')
+    else:
+        form=PostForm(instance=post)
+    return render(request,'registration/edit_post.html',{"form":form})
 
 def add_comment(request, id):
     if request.method == "POST":
