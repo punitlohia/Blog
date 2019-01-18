@@ -7,6 +7,7 @@
   {% if user.is_authenticated %}
   <h1>Profile</h1>
   <a href="blog"><button>Home</button></a>
+  <a href={% url 'allusers' %}><button>Users</button></a>
   <a href="profile/edit"><button>Edit Profile</button></a>
   <a href="accounts/logout"><button>Logout</button></a><br>
   Your Username:- {{user.username}}<br>
@@ -15,14 +16,23 @@
   Email:- {{user.email}}<br>
   Birth Date:- {{user.profile.birth_date}}<br>
   Followers:<br>
+  {% if followers_list %}
   {% for a in followers_list.all %}
   <a href={% url 'user_profile' a.id %}>{{a.get_full_name}}</a><br>
   {% endfor %}
+  {% else %}
+  No Followers<br>
+  {% endif %}
   Following:<br>
+  {% if following_list %}
   {% for a in following_list.all %}
   <a href={% url 'user_profile' a.id %}>{{a.get_full_name}}</a><br>
   {% endfor %}
-  <h3>Posts:-</h3><br>
+  {% else %}
+  No Following<br>
+  {% endif %}
+  <h3>Posts:-</h3>
+  {% if posts %}
   {% for po in posts %}
     <b>{{po.title}}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href={% url 'edit_post_profile' po.id %}><button>Edit</button></a><a href={% url 'delete_post_profile' po.id %}><button>Delete</button></a><br>
     {{po.description}}<br>
@@ -41,6 +51,9 @@
     {% endfor %}
     <br><br>
   {% endfor %}
+  {% else %}
+  <h4>No Posts</h4><br>
+  {% endif %}
   {% else %}
   <h2>You are not logged in</h2>
   <a href="accounts/login"><button>Login</button></a>

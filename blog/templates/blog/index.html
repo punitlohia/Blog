@@ -7,7 +7,7 @@
   {% if user.is_authenticated %}
   <h2>Your username is {{user.username}}</h2>
   <a href="profile"><button>Profile</button></a>
-  <a href="allusers"><button>Other Users</button></a>
+  <a href="allusers"><button>Users</button></a>
   <a href="accounts/logout"><button>Logout</button></a>
   <br><br>
   <h4>Create Post</h4>
@@ -17,7 +17,8 @@
     <button type="submit">Post</button>
   </form>
   <br><br>
-  <h4>News Feed</h4><br>
+  <h3>News Feed :-</h3>
+  {% if posts %}
   {% for po in posts %}
     <b>{{po.title}}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if po.user == user %}<a href={% url 'edit_post' po.id %}><button>Edit</button></a><a href={% url 'delete_post' po.id %}><button>Delete</button></a>{% endif %}<br>
     {{po.description}}<br>
@@ -36,6 +37,9 @@
     {% endfor %}
     <br><br>
   {% endfor %}
+  {% else %}
+  <h4>No Posts</h4>
+  {% endif %}
   {% else %}
   <h2>You are not logged in</h2>
   <a href="accounts/login"><button>Login</button></a>
