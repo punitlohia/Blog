@@ -12,7 +12,7 @@ def index(request):
     comment = AddComment
     if request.user not in request.user.profile.following.all():
         request.user.profile.following.add(request.user)
-        
+
     following_list = request.user.profile.following.all()
     if request.method=="POST":
         form = PostForm(request.POST)
@@ -191,6 +191,7 @@ def add_comment_userprofile(request, id,id2):
     return redirect('user_profile',id)
 
 def changeimage(request):
+    request.user.profile.image.delete(save=False)
     if request.method == "POST":
         form = EditProfileImage(request.POST,request.FILES,instance=request.user)
         if form.is_valid():
