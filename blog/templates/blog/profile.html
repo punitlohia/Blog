@@ -11,6 +11,12 @@
   <a href="profile/edit"><button>Edit Profile</button></a>
   <a href="accounts/logout"><button>Logout</button></a><br>
   Your Username:- {{user.username}}<br>
+  {% if user.profile.image %}
+  <img src="{{user.profile.image.url}}" width="250">
+  {% else %}
+  <img src="/media/profileimage/none.jpeg">
+  {% endif %}
+  <a href={% url 'changeimage' %}><button>Change Image</button></a><br>
   First name:- {{user.first_name}}<br>
   Last name:- {{user.last_name}}<br>
   Email:- {{user.email}}<br>

@@ -1,11 +1,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Registeration</title>
+  <title>Profile Image Change</title>
 </head>
 <body>
-  <h1>Registeration Form</h1>
-  <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
+
+  <form method="post" action="{% url 'changeimage' %}" enctype="multipart/form-data">
     {% csrf_token %}
 
     {% if form.errors %}
@@ -14,7 +14,7 @@
 
     {{form}}
 
-    <input type="submit" value="Register">
+    <input type="submit" value="Change Image">
 
   </form>
 </body>

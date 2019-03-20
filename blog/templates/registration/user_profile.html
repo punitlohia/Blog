@@ -11,6 +11,11 @@
   <a href={% url 'logout' %}><button>Logout</button></a><br>
   <h3>Profile</h3>
   Username:- {{data.username}}<br>
+  {% if data.profile.image %}
+  <img src="{{data.profile.image.url}}" width="250"><br>
+  {% else %}
+  <img src="/media/profileimage/none.jpeg"><br>
+  {% endif %}
   First name:- {{data.first_name}}<br>
   Last name:- {{data.last_name}}<br>
   Email:- {{data.email}}<br>

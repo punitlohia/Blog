@@ -6,6 +6,7 @@
 <body>
   <h1>Welcome to Blogging site</h1>
   <a href="accounts/login"><button>Login</button></a>
-  <a href="profile/register"><button>Register</button></a>
+  <a href="profile/register"><button>Register</button></a><br>
+  <strong><a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a><br></strong>
 </body>
 </html>

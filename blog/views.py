@@ -1,13 +1,18 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.forms import UserCreationForm,UserChangeForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,update_session_auth_hash
-from blog.forms import SignUpForm,EditProfileForm,PostForm,AddComment,PostFormOrignal
+from blog.forms import SignUpForm,EditProfileForm,PostForm,AddComment,PostFormOrignal,EditProfileImage
 from django.contrib.auth.models import User
 from .models import Post
+import datetime
+from django.core.mail import EmailMultiAlternatives
 
 def index(request):
 
     comment = AddComment
+    if request.user not in request.user.profile.following.all():
+        request.user.profile.following.add(request.user)
+        
     following_list = request.user.profile.following.all()
     if request.method=="POST":
         form = PostForm(request.POST)
@@ -24,6 +29,17 @@ def index(request):
             post2.description=description
             post2.save()
             form = PostForm()
+            mailto=[]
+            for ab in request.user.profile.following.exclude(id=request.user.id):
+                    if ab.email:
+                        mailto.append(ab.email)
+            mail = EmailMultiAlternatives(
+                subject="New Post has been Posted",
+                body="'"+request.user.username+"' has posted a new post titled '"+post.title+"'",
+                from_email="Punit Lohia <lohiapunit97@gmail.com>",
+                to=mailto,
+            )
+            mail.send()
     else:
         form = PostForm()
     posts = Post.objects.filter(user__in=following_list).order_by('-createddatetime')
@@ -54,11 +70,12 @@ def user_profile(request,id):
 
 def register(request):
     if request.method=="POST":
-        form = SignUpForm(request.POST)
+        form = SignUpForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             user.refresh_from_db()
             user.profile.birth_date = form.cleaned_data.get('birth_date')
+            user.profile.image = form.cleaned_data.get('image')
             user.profile.following.add(user)
             user.save()
             username = form.cleaned_data['username']
@@ -73,10 +90,11 @@ def register(request):
 
 def EditProfile(request):
     if request.method=="POST":
-        form = EditProfileForm(request.POST,instance=request.user)
+        form = EditProfileForm(request.POST,request.FILES,instance=request.user)
         if form.is_valid():
             user = form.save()
             user.profile.birth_date = form.cleaned_data.get('birth_date')
+            user.profile.image = form.cleaned_data.get('image')
             user.save()
             return redirect('profile')
     else:
@@ -132,6 +150,7 @@ def edit_post_profile(request,id):
 
 def delete_post(request,id):
     Post.objects.get(id=id).delete()
+    PostOrignal.objects.get(id=id).deleteddatetime=datetime.datetime.now()
     return redirect('index')
 
 def delete_post_profile(request,id):
@@ -170,6 +189,22 @@ def add_comment_userprofile(request, id,id2):
             comment.save()
 
     return redirect('user_profile',id)
+
+def changeimage(request):
+    if request.method == "POST":
+        form = EditProfileImage(request.POST,request.FILES,instance=request.user)
+        if form.is_valid():
+            profileimage = form.save(commit=False)
+            request.user.profile.image=form.cleaned_data.get('image')
+            request.user.save()
+            print("Hello")
+            return redirect('profile')
+
+    else:
+        print("Hello")
+        form=EditProfileImage(request.POST,request.FILES,instance=request.user)
+
+    return render(request,'registration/changeimage.html',{"form":form})
 
 def follow_user(request,id):
     temp = User.objects.get(pk=id)

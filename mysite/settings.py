@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-
+from . import keyconfig
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@ur$lvzx(o0+ki$g7=aicsialmjk1u5tjq3-#xgfp-3r9kyo=w'
+SECRET_KEY = keyconfig.secretkey
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +64,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -76,8 +79,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bloggingdatabase',
+        'USER': 'root',
+        'PASSWORD': os.environ.get('mysql_pass'),
     }
 }
 
@@ -100,6 +105,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+ 'social_core.backends.open_id.OpenIdAuth',
+ 'social_core.backends.google.GoogleOpenId',
+ 'social_core.backends.google.GoogleOAuth2',
+ 'django.contrib.auth.backends.ModelBackend',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -119,6 +130,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR)
 
+LOGIN_URL='/accounts/login'
 LOGIN_REDIRECT_URL='/blog'
 LOGOUT_REDIRECT_URL='/logout'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = keyconfig.googleauthkey
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = keyconfig.googleauthsecret
+
+EMAIL_BACKEND = "sgbackend.SendGridBackend"
+SENDGRID_API_KEY = keyconfig.sendgridapi

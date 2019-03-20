@@ -8,6 +8,7 @@ class Profile(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     following = models.ManyToManyField(User,related_name="Following",blank=True)
     followers = models.ManyToManyField(User,related_name="Followers",blank=True)
+    image = models.ImageField(upload_to='profileimage',blank=True)
     def __str__(self):
         return self.user.username
 

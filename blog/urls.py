@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('',views.initialpage,name='initialpage'),
@@ -19,5 +21,6 @@ urlpatterns = [
     path('allusers',views.allusers,name="allusers"),
     path('<id>/user_profile',views.user_profile,name="user_profile"),
     path('<id>/follow_user',views.follow_user,name="follow_user"),
-    path('<id>/unfollow_user',views.unfollow_user,name="unfollow_user")
-]
+    path('<id>/unfollow_user',views.unfollow_user,name="unfollow_user"),
+    path('profile/changeimage',views.changeimage,name="changeimage"),
+] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
